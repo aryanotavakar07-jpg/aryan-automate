@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "n8n": "n8n start",
     "dev": "node --watch server.js",
     "test": "node --test tests/leadAutomation.test.js",
     "test:webhook": "node scripts/test_webhook.js"
@@ -24,6 +25,7 @@
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "n8n": "^1.78.1"
   }
 }
