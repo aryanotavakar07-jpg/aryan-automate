@@ -21,6 +21,11 @@ app.use(express.urlencoded({ extended: true }));
 // Serve Dashboard static files
 app.use(express.static(path.join(__dirname, "public")));
 
+// Root Route - Web Dashboard
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 // Bind API Routes
 app.use(webhookRoutes);
 app.use(campaignRoutes);
