@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meta Real Estate Lead Automation Dashboard</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0e1a;
+      --bg-card: rgba(18, 25, 44, 0.75);
+      --bg-card-border: rgba(255, 255, 255, 0.08);
+      --accent-primary: #3b82f6;
+      --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(139, 92, 246, 0.12) 0%, transparent 40%);
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--bg-card-border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-gradient);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 2px;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-emerald);
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 1.5rem;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(10, 14, 26, 0.7);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.85rem 1.25rem;
+      background: var(--accent-gradient);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--bg-card-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+      box-shadow: none;
+    }
+
+    .mappings-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+
+    .mappings-table th, .mappings-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--bg-card-border);
+      font-size: 0.85rem;
+    }
+
+    .mappings-table th {
+      color: var(--text-muted);
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+    }
+
+    .tag-table {
+      background: rgba(139, 92, 246, 0.15);
+      color: #c084fc;
+    }
+
+    .log-box {
+      background: #060913;
+      border: 1px solid var(--bg-card-border);
+      border-radius: 12px;
+      padding: 1rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      height: 320px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      color: #a7f3d0;
+    }
+
+    .whatsapp-preview {
+      background: #0b141a;
+      border: 1px solid #1f2c34;
+      border-radius: 12px;
+      padding: 1rem;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 0.9rem;
+      color: #e9edef;
+      line-height: 1.5;
+      margin-top: 1rem;
+      white-space: pre-line;
+      border-left: 4px solid #25d366;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo-icon">🏢</div>
+        <div>
+          <h1>Real Estate Lead Automation</h1>
+          <div class="subtitle">Multi-Campaign Meta Webhook ➔ Airtable CRM & WhatsApp Engine</div>
+        </div>
+      </div>
+      <div class="badge-status">
+        <div class="status-dot"></div>
+        <span>Webhook Server Active</span>
+      </div>
+    </header>
+
+    <div class="grid-layout">
+      <!-- Simulator Card -->
+      <div class="card">
+        <div class="card-title">🧪 Meta Lead Ads Simulator</div>
+        
+        <div class="form-group">
+          <label>Preset Campaign / Form ID</label>
+          <select id="presetSelect" onchange="loadPresetPayload()">
+            <option value="1044971085049692">Silver Saphire [Form: 1044971085049692] ➔ Table: Silver Saphire</option>
+            <option value="900221056143338">Navkarmik [Form: 900221056143338] ➔ Table: Navkarmik</option>
+            <option value="4520640294886848">Marquis Malad West (Main) [Form: 4520640294886848]</option>
+            <option value="999000111222">Unknown Campaign Form [Form: 999000111222]</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Full name</label>
+          <input type="text" id="custName" value="Rajesh Sharma" placeholder="Leave empty to test auto fallback">
+        </div>
+
+        <div class="form-group">
+          <label>Phone number (Indian format test)</label>
+          <input type="text" id="custPhone" value="+91 98927 49953" placeholder="+91 XXXXXXXXXX">
+        </div>
+
+        <div class="form-group">
+          <label>WHICH CONFIGURATION ARE YOU LOOKING FOR?</label>
+          <select id="custConfig">
+            <option value="2 BHK">2 BHK</option>
+            <option value="3 BHK">3 BHK</option>
+            <option value="1 BHK">1 BHK</option>
+            <option value="JODI OPTION">JODI OPTION</option>
+          </select>
+        </div>
+
+        <button class="btn" onclick="sendTestLead()">
+          🚀 Dispatch Meta Lead Webhook
+        </button>
+      </div>
+
+      <!-- Campaign Registry Card -->
+      <div class="card">
+        <div class="card-title">📥 Multi-Form & Campaign Routing Registry</div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Connects Meta Form IDs to Campaign Names and specific target Airtable CRM Tables.
+        </p>
+
+        <table class="mappings-table">
+          <thead>
+            <tr>
+              <th>Form ID</th>
+              <th>Campaign Name</th>
+              <th>Target Table</th>
+            </tr>
+          </thead>
+          <tbody id="registryBody">
+            <!-- Dynamic rows populated via JS -->
+          </tbody>
+        </table>
+
+        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+          <button class="btn btn-secondary" onclick="fetchRegistry()">🔄 Refresh Mappings</button>
+          <button class="btn btn-secondary" onclick="resetRegistry()">⏪ Reset Defaults</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Execution Output & Logs -->
+    <div class="grid-layout">
+      <div class="card">
+        <div class="card-title">📱 Branded WhatsApp Admin Alert Preview</div>
+        <div id="whatsappContainer" class="whatsapp-preview">
+          Dispatch a lead webhook to render WhatsApp alert output...
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚡ Lead Processing Execution Log</div>
+        <div id="logBox" class="log-box">System initialized. Awaiting webhook events...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function fetchRegistry() {
+      try {
+        const res = await fetch('/api/campaigns');
+        const data = await res.json();
+        const tbody = document.getElementById('registryBody');
+        tbody.innerHTML = '';
+
+        for (const [formId, info] of Object.entries(data.mappings)) {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><span class="tag">${formId}</span></td>
+            <td><strong>${info.campaignName}</strong></td>
+            <td><span class="tag tag-table">${info.tableName}</span></td>
+          `;
+          tbody.appendChild(row);
+        }
+
+        // Add unknown fallback row
+        const fallbackRow = document.createElement('tr');
+        fallbackRow.style.opacity = '0.7';
+        fallbackRow.innerHTML = `
+          <td><span class="tag" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">Unknown Form ID</span></td>
+          <td><em>Campaign (Form &lt;form_id&gt;)</em></td>
+          <td><span class="tag tag-table">Leads</span></td>
+        `;
+        tbody.appendChild(fallbackRow);
+
+      } catch (err) {
+        console.error('Failed to fetch registry:', err);
+      }
+    }
+
+    async function sendTestLead() {
+      const formId = document.getElementById('presetSelect').value;
+      const fullName = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      const config = document.getElementById('custConfig').value;
+
+      const payload = {
+        form_id: formId,
+        leadgen_id: 'lead_' + Math.floor(Math.random() * 10000000),
+        field_data: [
+          { name: 'Full name', values: [fullName] },
+          { name: 'Phone number', values: [phone] },
+          { name: 'WHICH CONFIGURATION ARE YOU LOOKING FOR?', values: [config] }
+        ]
+      };
+
+      const logBox = document.getElementById('logBox');
+      logBox.textContent = `[${new Date().toLocaleTimeString()}] Sending Webhook payload for Form ID ${formId}...\n` + JSON.stringify(payload, null, 2);
+
+      try {
+        const res = await fetch('/api/lead-test', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        logBox.textContent = `[${new Date().toLocaleTimeString()}] SUCCESS: Lead Processed!\n` + JSON.stringify(result, null, 2);
+
+        if (result.whatsappResult && result.whatsappResult.message) {
+          document.getElementById('whatsappContainer').innerText = result.whatsappResult.message;
+        }
+      } catch (err) {
+        logBox.textContent = `[ERROR] Failed to dispatch test lead: ` + err.message;
+      }
+    }
+
+    async function resetRegistry() {
+      await fetch('/api/campaigns/reset', { method: 'POST' });
+      await fetchRegistry();
+    }
+
+    function loadPresetPayload() {
+      const val = document.getElementById('presetSelect').value;
+      if (val === '1044971085049692') {
+        document.getElementById('custName').value = 'Rajesh Sharma';
+        document.getElementById('custPhone').value = '+91 98927 49953';
+        document.getElementById('custConfig').value = '3 BHK';
+      } else if (val === '900221056143338') {
+        document.getElementById('custName').value = 'Amit Verma';
+        document.getElementById('custPhone').value = '097738382905';
+        document.getElementById('custConfig').value = 'JODI OPTION';
+      } else if (val === '4520640294886848') {
+        document.getElementById('custName').value = 'Priya Patel';
+        document.getElementById('custPhone').value = '9820011223';
+        document.getElementById('custConfig').value = '2 BHK';
+      } else {
+        document.getElementById('custName').value = '';
+        document.getElementById('custPhone').value = '9870054321';
+        document.getElementById('custConfig').value = '1 BHK';
+      }
+    }
+
+    // Initial load
+    fetchRegistry();
+  </script>
+</body>
+</html>
