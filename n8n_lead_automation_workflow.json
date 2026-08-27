@@ -1,0 +1,225 @@
+{
+  "name": "Meta Lead Ads Multi-Campaign Real Estate Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "meta-lead-webhook",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "name": "Meta Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Multi-Form & Campaign Routing Registry (Strict Form Filter)\nconst registry = {\n  \"1044971085049692\": { campaignName: \"Silver Saphire\", tableName: \"Silver Saphire\" },\n  \"900221056143338\": { campaignName: \"Navkarmik\", tableName: \"Navkarmik\" }\n};\n\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const body = item.json.body || item.json;\n  \n  // Extract Form ID\n  let formId = body.form_id || (body.entry && body.entry[0]?.changes[0]?.value?.form_id) || \"\";\n  formId = String(formId).trim();\n  \n  // Strict Registry Filter Check\n  if (!registry[formId]) {\n    continue; // Ignore leads from unregistered form IDs\n  }\n  \n  const campaignName = registry[formId].campaignName;\n  const tableName = registry[formId].tableName;\n  \n  // Field Normalization & Extraction\n  const fieldData = body.field_data || (body.entry && body.entry[0]?.changes[0]?.value?.field_data) || [];\n  \n  let rawPhone = \"\";\n  let rawName = \"\";\n  let rawConfig = \"\";\n  const leadId = body.leadgen_id || (body.entry && body.entry[0]?.changes[0]?.value?.leadgen_id) || Date.now().toString().slice(-6);\n  \n  if (Array.isArray(fieldData)) {\n    for (const f of fieldData) {\n      const name = String(f.name || \"\").toLowerCase();\n      const val = Array.isArray(f.values) ? f.values.join(\", \") : String(f.values || \"\");\n      \n      if (name.includes(\"phone\") || name.includes(\"mobile\") || name.includes(\"contact\")) rawPhone = val;\n      else if (name.includes(\"full name\") || name.includes(\"name\")) rawName = val;\n      else if (name.includes(\"configuration\") || name.includes(\"unit\") || name.includes(\"bhk\") || name.includes(\"looking for\")) rawConfig = val;\n      \n      if (!rawConfig && (val.toLowerCase().includes(\"bhk\") || val.toLowerCase().includes(\"jodi\"))) rawConfig = val;\n    }\n  }\n  \n  // 1. Phone Normalization (12-digit Indian 91XXXXXXXXXX)\n  let digits = (rawPhone || \"\").replace(/\\D/g, \"\");\n  const mobileMatch = digits.match(/[6-9]\\d{9}$/);\n  if (mobileMatch) digits = \"91\" + mobileMatch[0];\n  else if (digits.length === 10) digits = \"91\" + digits;\n  else if (digits.length > 12 && digits.startsWith(\"91\")) digits = digits.slice(0, 12);\n  if (!digits) digits = \"910000000000\";\n  \n  // 2. Full Name Extractor & Fallback\n  let fullName = (rawName || \"\").trim();\n  const dummyTerms = [\"test\", \"dummy\", \"n/a\", \"none\", \"\"];\n  if (dummyTerms.includes(fullName.toLowerCase())) {\n    fullName = `FB Prospect (#${leadId})`;\n  }\n  \n  // 3. Property Configuration\n  let propertyType = (rawConfig || \"2 BHK\").toUpperCase().replace(/\\s+/g, \" \");\n  if (propertyType.includes(\"JODI\")) propertyType = \"JODI OPTION\";\n  \n  // 4. Formatted WhatsApp Message\n  const whatsappMessage = `🚨 *NEW LEAD RECEIVED* 🚨\\n\\n📋 *Campaign Name:* ${campaignName}\\n📌 *Meta Form ID:* ${formId}\\n\\n👤 *Customer Name:* ${fullName}\\n📱 *Phone Number:* +${digits}\\n🏢 *Configuration:* ${propertyType}\\n📁 *Saved To Table:* ${tableName}`;\n  \n  results.push({\n    json: {\n      formId,\n      campaignName,\n      tableName,\n      leadId,\n      fullName,\n      phoneNumber: digits,\n      propertyType,\n      whatsappMessage,\n      adminNumbers: [\"+919892749953\", \"+917738382905\"]\n    }\n  });\n}\n\nreturn results;"
+      },
+      "name": "Dynamic Extractor & Router Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.tableName }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "Silver Saphire",
+              "output": 0
+            },
+            {
+              "value2": "Navkarmik",
+              "output": 1
+            }
+          ]
+        },
+        "fallbackOutput": 1
+      },
+      "name": "Switch Target Table",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "application": "YOUR_AIRTABLE_BASE_ID",
+        "table": "Silver Saphire",
+        "options": {},
+        "fields": [
+          {
+            "name": "Name",
+            "value": "={{ $json.fullName }}"
+          },
+          {
+            "name": "Phone Number",
+            "value": "=+{{ $json.phoneNumber }}"
+          },
+          {
+            "name": "Property Type",
+            "value": "={{ $json.propertyType }}"
+          },
+          {
+            "name": "Status",
+            "value": "New"
+          }
+        ]
+      },
+      "name": "Airtable: Silver Saphire Table",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        940,
+        150
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "application": "YOUR_AIRTABLE_BASE_ID",
+        "table": "Navkarmik",
+        "options": {},
+        "fields": [
+          {
+            "name": "Name",
+            "value": "={{ $json.fullName }}"
+          },
+          {
+            "name": "Phone Number",
+            "value": "=+{{ $json.phoneNumber }}"
+          },
+          {
+            "name": "Property Type",
+            "value": "={{ $json.propertyType }}"
+          },
+          {
+            "name": "Status",
+            "value": "New"
+          }
+        ]
+      },
+      "name": "Airtable: Navkarmik Table",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        940,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/YOUR_WHATSAPP_PHONE_NUMBER_ID/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "messaging_product",
+              "value": "whatsapp"
+            },
+            {
+              "name": "to",
+              "value": "919892749953"
+            },
+            {
+              "name": "type",
+              "value": "text"
+            },
+            {
+              "name": "text",
+              "value": "={{ JSON.stringify({ body: $json.whatsappMessage }) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "WhatsApp Admin Alert API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1200,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Meta Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Dynamic Extractor & Router Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dynamic Extractor & Router Code": {
+      "main": [
+        [
+          {
+            "node": "Switch Target Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Target Table": {
+      "main": [
+        [
+          {
+            "node": "Airtable: Silver Saphire Table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Airtable: Navkarmik Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable: Silver Saphire Table": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Admin Alert API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable: Navkarmik Table": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Admin Alert API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

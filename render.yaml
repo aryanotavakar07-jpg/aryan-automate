@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: realestate-lead-automation
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: META_VERIFY_TOKEN
+        value: marquis_realestate_lead_secret_2026
+      - key: WHATSAPP_PROVIDER
+        value: console
+      - key: WHATSAPP_ADMIN_NUMBERS
+        value: "+919892749953,+917738382905"
