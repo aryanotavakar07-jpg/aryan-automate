@@ -6,13 +6,15 @@ services:
     plan: free
     envVars:
       - key: PORT
-        value: 10000
+        value: 5678
       - key: N8N_PORT
-        value: 10000
+        value: 5678
       - key: N8N_LISTEN_ADDRESS
         value: 0.0.0.0
       - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
         value: "true"
+      - key: N8N_ENCRYPTION_KEY
+        value: marquis_n8n_secret_key_2026
       - key: N8N_PROTOCOL
         value: https
       - key: N8N_HOST
