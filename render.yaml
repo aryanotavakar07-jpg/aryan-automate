@@ -22,7 +22,7 @@ services:
       - key: WEBHOOK_URL
         value: https://aryan-automate.onrender.com/
       - key: NODE_OPTIONS
-        value: "--max-old-space-size=280 --optimize-for-size"
+        value: "--max-old-space-size=280"
       - key: N8N_USER_MANAGEMENT_DISABLED
         value: "true"
       - key: EXECUTIONS_DATA_PRUNE
