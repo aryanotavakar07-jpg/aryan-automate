@@ -1,42 +1,21 @@
 services:
   - type: web
     name: aryan-automate
-    env: docker
+    env: node
     region: singapore
     plan: free
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: PORT
-        value: 5678
-      - key: N8N_PORT
-        value: 5678
-      - key: N8N_LISTEN_ADDRESS
-        value: 0.0.0.0
-      - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
-        value: "true"
-      - key: N8N_ENCRYPTION_KEY
-        value: marquis_n8n_secret_key_2026
-      - key: N8N_PROTOCOL
-        value: https
-      - key: N8N_HOST
-        value: aryan-automate.onrender.com
-      - key: WEBHOOK_URL
-        value: https://aryan-automate.onrender.com/
-      - key: NODE_OPTIONS
-        value: "--max-old-space-size=280"
-      - key: N8N_USER_MANAGEMENT_DISABLED
-        value: "true"
-      - key: EXECUTIONS_DATA_PRUNE
-        value: "true"
-      - key: EXECUTIONS_DATA_MAX_AGE
-        value: "1"
-      - key: EXECUTIONS_DATA_SAVE_ON_SUCCESS
-        value: "none"
-      - key: EXECUTIONS_DATA_SAVE_ON_ERROR
-        value: "all"
-      - key: N8N_TELEMETRY_DISABLED
-        value: "true"
+        value: 10000
+      - key: NODE_ENV
+        value: production
       - key: META_VERIFY_TOKEN
         value: marquis_realestate_lead_secret_2026
+      - key: WHATSAPP_PROVIDER
+        value: console
       - key: WHATSAPP_ADMIN_NUMBERS
         value: "+919892749953,+917738382905"
+
 
