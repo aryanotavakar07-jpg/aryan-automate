@@ -1,11 +1,9 @@
 services:
   - type: web
     name: aryan-automate
-    env: node
+    env: docker
     region: singapore
     plan: free
-    buildCommand: npm install
-    startCommand: n8n start
     envVars:
       - key: PORT
         value: 5678
